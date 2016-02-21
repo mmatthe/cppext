@@ -1,35 +1,60 @@
-(defun mm/compile () (interactive)
-  "If a variable 'mm/proj-build-dir' is available, run make in
+(defun cppext/compile () (interactive)
+  "If a variable 'cppext/proj-build-dir' is available, run make in
 this directory. Otherwise, run the normal compile-function"
-  (if (boundp 'mm/proj-build-dir)
-      (let ((cmd (concat "cd " mm/proj-build-dir " && make -j8")))
+  (if (boundp 'cppext/proj-build-dir)
+      (let ((cmd (concat "cd " cppext/proj-build-dir " && make -j8")))
 	(compile cmd))
     (call-interactively 'compile)))
 
+(defun cppext/test-bindir () (concat cppext/proj-build-dir cppext/test-dir))
 
-(defun mm/get-list-elem (n listOrVar)
-  (if (listp listOrVar)
-	  (nth n listOrVar)
-	listOrVar))
+(defun cppext/run-unit-tests (n) (interactive)
+  (interactive)
+  (let ((rundir (cppext/test-bindir))
+	(bindir (cppext/test-bindir)))
+    (cppext/choose-and-run-compiled-program rundir
+					    bindir
+					    cppext/unit-test-exec
+					    "")))
 
-(defun mm/run-compiled-program (workdir bindir exec)
+(defun cppext/run-integration-tests ()
+  (interactive)
+  (let ((rundir (cppext/test-bindir))
+	(bindir (cppext/test-bindir)))
+    (cppext/choose-and-run-compiled-program rundir
+					    bindir
+					    cppext/integration-test-exec
+					    "")))
+
+(defun cppext/run-ctest () (interactive)
+  (cppext/run-compiled-program (cppext/test-bindir) "" "ctest --output-on-failure"))
+
+(setq cppext/last-main-exec "bla")
+(defun cppext/run-main ()
+  (interactive)
+  (let ((rundir (concat cppext/proj-root-dir cppext/work-dir))
+	(bindir cppext/proj-build-dir))
+    (setq cppext/last-main-exec
+	  (cppext/choose-and-run-compiled-program rundir
+						  bindir
+						  cppext/main-exec
+						  cppext/last-main-exec))))
+
+(defun cppext/choose-and-run-compiled-program (workdir bindir cmds lastcmd)
+  (let ((cmdStr (if (listp cmds)
+		    (completing-read "Choose executable to run: "
+				     cmds
+				     nil t lastcmd)
+		  cmds)))
+    (message cmdStr)
+    (cppext/run-compiled-program workdir bindir cmdStr)
+    cmdStr))
+
+(defun cppext/run-compiled-program (workdir bindir exec)
   (let ((cmd (concat "cd " workdir " && " bindir exec)))
 	(compile cmd)))
-(defun mm/test-bindir () (concat mm/proj-build-dir mm/test-dir))
 
-(defun mm/run-unit-tests (n) (interactive)
-  (mm/run-compiled-program (mm/test-bindir) (mm/test-bindir) mm/unit-test-exec))
-
-(defun mm/run-integration-tests (n) (interactive)
-  (mm/run-compiled-program (mm/test-bindir) (mm/test-bindir) (mm/get-list-elem n mm/integration-test-exec)))
-
-(defun mm/run-ctest () (interactive)
-  (mm/run-compiled-program (mm/test-bindir) "" "ctest --output-on-failure"))
-
-(defun mm/run-main (n) (interactive)
-  (mm/run-compiled-program (concat mm/proj-root-dir mm/work-dir) mm/proj-build-dir (mm/get-list-elem n mm/main-exec)))
-
-(defun mm/gmocktokillring ()
+(defun cppext/gmocktokillring ()
   (interactive)
   (let ((class (thing-at-point 'word))
 	(file (buffer-file-name)))
@@ -39,12 +64,12 @@ this directory. Otherwise, run the normal compile-function"
       )))
 
 
-(defun mm/c-mode-keys () (interactive)
-  (local-set-key (kbd "C-c C-r C-t") (lambda () (interactive) (mm/run-unit-tests 0)))
-  (local-set-key (kbd "C-c C-r C-c") 'mm/run-ctest)
-  (local-set-key (kbd "C-c C-r C-i") (lambda () (interactive) (mm/run-integration-tests 0)))
-  (local-set-key (kbd "C-c C-r C-r") (lambda () (interactive) (mm/run-main 0)))
-  (local-set-key (kbd "C-c C-c") 'mm/compile)
+(defun cppext/c-mode-keys () (interactive)
+  (local-set-key (kbd "C-c C-r C-t") (lambda () (interactive) (cppext/run-unit-tests 0)))
+  (local-set-key (kbd "C-c C-r C-c") 'cppext/run-ctest)
+  (local-set-key (kbd "C-c C-r C-i") (lambda () (interactive) (cppext/run-integration-tests 0)))
+  (local-set-key (kbd "C-c C-r C-r") 'cppext/run-main)
+  (local-set-key (kbd "C-c C-c") 'cppext/compile)
   (local-set-key (kbd "C-c C-f") 'clang-format-region)
 
   (local-set-key (kbd "C-c r m") 'am/add-member)
@@ -52,9 +77,10 @@ this directory. Otherwise, run the normal compile-function"
   (local-set-key (kbd "C-c <") 'rtags-location-stack-back)
   (local-set-key (kbd "C-c >") 'rtags-location-stack-forward)
 
-  (local-set-key (kbd "C-c C-m") 'mm/gmocktokillring)
+  (local-set-key (kbd "C-c C-m") 'cppext/gmocktokillring)
 )
-(add-hook 'c-mode-common-hook 'mm/c-mode-keys)
+(add-hook 'c-mode-common-hook 'cppext/c-mode-keys)
+
 
 
 (provide 'cppext)
