@@ -10,6 +10,39 @@
 #+CREATOR: Emacs 25.0.91.1 (Org mode 8.3.3)
 
 * Overview
+This package provides some extra functionality for working with CMake
+based projects. It offers
+- Compilation and running of targets: Set up your compilation and
+  working dir in a .dir-locals file and execute the corresponding
+  targets or tests by simple commands.
+- Add a member function to a C++-class. Automatic generation of
+  declaration and implementation, includig correct signature.
+- aid TDD for C++ by adding yasnippets for creating a test case / test
+  fixture for google test and automatically creating git commit messages.
 * Functions for running and compiling the project
+Add a .dir-locals to the project root directory, that sets the
+following variables:
+#+begin_src emacs-lisp :tangle yes
+  ((nil . ((cppext/proj-root-dir . "/your/source/root/dir")
+           (cppext/proj-build-dir . "/where/to/call/make")
+
+           (cppext/work-dir . "pwd/for/executables/relative/to/proj-root-dir/")
+           (cppext/main-exec .
+                             ("target1 --param A --param B"
+                              "target2 --param C --param D"))
+
+           (cppext/test-dir . "pwd/for/tests/rel/to/build-dir")
+           (cppext/unit-test-exec . "command/to/execute/unittests")
+           (cppext/integration-test-exec . "command/to/execute/integration-tests"))
+        ))
+#+end_src
+- proj-root-dir is the source root directory
+- proj-build-dir is the dir where cmake was run and make will be run
+  to compile the project
+- =main-exec=, =unit-test-exec=, =integration-test-exec= determine
+  commands for executing main targets, unit test targets and
+  integration test targets. They can either be a list of commands or a
+  signle command. User will be asked for a selection, if several
+  elements are in the list.
 * Function to add a member function to a class
 * Function to automatically create a git commit-message
