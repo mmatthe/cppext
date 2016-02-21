@@ -1,3 +1,5 @@
+;;; cppext.el --- Emacs Extensions for developing C++ programs
+
 (defun cppext/compile () (interactive)
   "If a variable 'cppext/proj-build-dir' is available, run make in
 this directory. Otherwise, run the normal compile-function"
@@ -84,3 +86,5 @@ this directory. Otherwise, run the normal compile-function"
 
 
 (provide 'cppext)
+
+;;; cppext.el ends here
