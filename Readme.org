@@ -46,7 +46,7 @@ following variables:
   elements are in the list.
 
 By default, the following bindings are allocated in Cpp-mode files
-- =C-c C-c= compile project
+- =C-c C-c= compile project by changing to build-dir and calling =make=
 - =C-C C-r C-t= run unit test
 - =C-c C-r C-c= run integration tests
 - =C-c C-r C-r= run main executable
