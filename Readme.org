@@ -44,5 +44,12 @@ following variables:
   integration test targets. They can either be a list of commands or a
   signle command. User will be asked for a selection, if several
   elements are in the list.
+
+By default, the following bindings are allocated in Cpp-mode files
+- =C-c C-c= compile project
+- =C-C C-r C-t= run unit test
+- =C-c C-r C-c= run integration tests
+- =C-c C-r C-r= run main executable
+
 * Function to add a member function to a class
 * Function to automatically create a git commit-message
