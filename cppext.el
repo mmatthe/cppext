@@ -83,8 +83,6 @@ this directory. Otherwise, run the normal compile-function"
 )
 (add-hook 'c-mode-common-hook 'cppext/c-mode-keys)
 
-
-
 (provide 'cppext)
 
 ;;; cppext.el ends here
