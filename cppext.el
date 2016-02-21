@@ -29,7 +29,7 @@ this directory. Otherwise, run the normal compile-function"
 (defun cppext/run-ctest () (interactive)
   (cppext/run-compiled-program (cppext/test-bindir) "" "ctest --output-on-failure"))
 
-(setq cppext/last-main-exec "bla")
+(setq cppext/last-main-exec "")
 (defun cppext/run-main ()
   (interactive)
   (let ((rundir (concat cppext/proj-root-dir cppext/work-dir))
