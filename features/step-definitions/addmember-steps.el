@@ -4,7 +4,16 @@
 
 (Given "^I open file \"\\([^\"]+\\)\"$"
       (lambda (file)
-	(find-file-existing (cppext-features-path "data/" file))))
+	(find-file-existing (f-join cppext-features-path "data/" file))))
+
+(When "^I call addmember with \"\\([^\"]+\\)\"$"
+      (lambda (sign)
+	(When "I start an action chain")
+	(When "I press \"M-x\"")
+	(When "I type \"cppext/addmember\"")
+	(When "I press \"<return>\"")
+	(When (format "I type \"%s\"" sign))
+	(When "I execute the action chain")))
 
 (Given "^I have \"\\(.+\\)\"$"
   (lambda (something)

@@ -12,15 +12,24 @@
 (add-to-list 'load-path cppext-root-path)
 
 (require 'cppext)
+(require 'cppext-addmember)
 (require 'espuds)
 (require 'ert)
 
 (Setup
  ;; Before anything has run
+ (setq debug-on-error nil)
  )
 
 (Before
  ;; Before each scenario is run
+ (save-window-excursion
+ (let ((revert-without-query t))
+   (mapc (lambda (b)
+	   (when (buffer-file-name b)
+	     (switch-to-buffer b)
+	     (revert-buffer t t)))
+	 (buffer-list))))
  )
 
 (After
